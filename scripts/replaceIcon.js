@@ -2,7 +2,7 @@
     const newIconUrl = window.pluginAssets['newIcon'];
 
     function replaceSvgIcon() {
-        const svgIcon = document.querySelector('div.r-1ljd8xs:nth-child(1) > div:nth-child(1) > svg:nth-child(1)');
+        const svgIcon = document.querySelector('div.r-1wtj0ep:nth-child(1) > div:nth-child(2) > svg:nth-child(1)');
 
         if (svgIcon) {
             const width = svgIcon.getAttribute('width') || '28px';
