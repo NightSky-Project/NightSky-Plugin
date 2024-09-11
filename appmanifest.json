@@ -6,7 +6,8 @@
     "version_code": 1,
     "icon": "icon.png",
     "content": {
-        "scripts": ["scripts/testPlugin.js"],
-        "styles": ["styles/testPlugin.css"]
+        "scripts": ["scripts/testPlugin.js", "scripts/replaceIcon.js"],
+        "styles": ["styles/testPlugin.css"],
+        "assets": ["assets/icon.png"]
     }
 }

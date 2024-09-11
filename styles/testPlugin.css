@@ -1,4 +1,3 @@
-/* Test plugin style that changes the font color of the body */
 * {
-    background-color: red !important;
+    background-color: rgb(6, 5, 49) !important;
 }
