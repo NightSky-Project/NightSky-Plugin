@@ -40,7 +40,7 @@
             svgElement.insertBefore(defs, svgElement.firstChild);
             svgIcon.setAttribute('fill', `url(#${gradientId})`);
         } else {
-            console.warn('SVG icon not found');
+            // console.warn('SVG icon not found');
         }
     }
 
