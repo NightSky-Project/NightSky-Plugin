@@ -1,5 +1,10 @@
 (function() {
-    const newIconUrl = window.pluginAssets['newIcon'];
+    const newIconUrl = window.pluginAssets['pluginTest/assets/icon.png'];
+
+    if(!newIconUrl) {
+        console.warn('Icon not found');
+        return;
+    }
 
     function replaceSvgIcon() {
         const svgIcon = document.querySelector('div.r-1wtj0ep:nth-child(1) > div:nth-child(2) > svg:nth-child(1)');
