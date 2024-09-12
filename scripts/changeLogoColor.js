@@ -44,8 +44,29 @@
         }
     }
 
-    // Run after the DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', changeSvgIcon);
-    window.addEventListener('load', changeSvgIcon);
+    function isRootUrl() { // Check if the current URL is the root that contains the SVG logo
+        return window.location.pathname === '/';
+    }
+
+    if (isRootUrl()) {
+        if (document.readyState === 'complete') {
+            changeSvgIcon();
+        } else {
+            document.addEventListener('DOMContentLoaded', changeSvgIcon);
+            window.addEventListener('load', changeSvgIcon);
+        }
+
+        // Observe DOM changes and reapply if necessary
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                changeSvgIcon();
+            });
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+        });
+    }
 
 })();
