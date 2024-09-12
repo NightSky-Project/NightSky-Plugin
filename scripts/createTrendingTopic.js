@@ -9,9 +9,8 @@ function addTrendingTopics() {
     if(!suggestedUsersDiv) {
         suggestedUsersDiv = document.querySelector('.r-sa2ff0');  
     }
-    const trendingHtml = window.pluginAssets['opensky-plugin-default/html/trending-topics.html'];
 
-    if (!suggestedUsersDiv || !trendingHtml) {
+    if (!suggestedUsersDiv) {
         if(!suggestedUsersDiv) {
             console.error('Suggested Users div not found');
         }
@@ -40,27 +39,38 @@ function addTrendingTopics() {
 
     // Create the new div for Trending Topics
     const trendingDiv = document.createElement('div');
-    console.log('trendingHtml: ', trendingHtml);
-    fetch(trendingHtml)
-        .then((response) => {
-            console.log('response: ', response);
-            return response.text();
-        })
-        .then((data) => {
-            console.log('data: ', data);
-            trendingDiv.innerHTML = data;
-            trendingDiv.classList.add('css-175oi2r');
 
-            // Ensure suggestedUsersDiv has a parent node before inserting
-            if (suggestedUsersDiv.parentNode) {
+    function requestResource(pluginSlug, resource) {
+        // Enviar uma mensagem para o React Native para buscar o recurso
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+            messageType: 'FETCH_RESOURCE',
+            pluginSlug: pluginSlug,
+            resource: resource,
+        }));
+    }
+
+    window.receiveResource = function(path, content) {
+        if (trendingDiv.innerHTML === content) {
+            console.log('Trending topics content is already up-to-date.');
+            return;
+        }
+
+        trendingDiv.innerHTML = content;
+        trendingDiv.classList.add('css-175oi2r');
+
+        if (suggestedUsersDiv.parentNode) {
+            if (!document.contains(trendingDiv)) {
                 suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
             } else {
-                console.error('Suggested Users div has no parent node');
+                console.log('Trending topics div is already inserted.');
             }
-        })
-        .catch((error) => {
-            console.error('Error fetching Trending Topics HTML:', error);
-        });
+        } else {
+            console.error('Suggested Users div has no parent node');
+        }
+    }
+
+    // Request the trending topics resource
+    requestResource('opensky-plugin-default', 'trending-topics.html');
 }
 
 function isRootUrl() {
@@ -97,16 +107,16 @@ function initTrendingTopics() {
         }
 
         // Observe DOM changes and reapply if necessary
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                addTrendingTopics();
-            });
-        });
+        // const observer = new MutationObserver((mutations) => {
+        //     mutations.forEach((mutation) => {
+        //         addTrendingTopics();
+        //     });
+        // });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-        });
+        // observer.observe(document.body, {
+        //     childList: true,
+        //     subtree: true,
+        // });
     }
 }
 
