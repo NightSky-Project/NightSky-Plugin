@@ -8,10 +8,6 @@ function addTrendingTopics() {
     let suggestedUsersDiv = document.querySelector('div.r-1d5kdc7:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)');
     if(!suggestedUsersDiv) {
         suggestedUsersDiv = document.querySelector('.r-sa2ff0');  
-        
-        if(!suggestedUsersDiv) {
-            return;
-        }
     }
     const trendingHtml = window.pluginAssets['opensky-plugin-default/html/trending-topics.html'];
 
@@ -45,17 +41,22 @@ function addTrendingTopics() {
     // Create the new div for Trending Topics
     const trendingDiv = document.createElement('div');
     console.log('trendingHtml: ', trendingHtml);
-    fetch(trendingHtml) 
+    fetch(trendingHtml)
         .then((response) => {
             console.log('response: ', response);
-            response.text();
+            return response.text();
         })
         .then((data) => {
             console.log('data: ', data);
-            trendingDiv.innerHTML = data; 
-            trendingDiv.classList.add('css-175oi2r'); 
+            trendingDiv.innerHTML = data;
+            trendingDiv.classList.add('css-175oi2r');
 
-            suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+            // Ensure suggestedUsersDiv has a parent node before inserting
+            if (suggestedUsersDiv.parentNode) {
+                suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+            } else {
+                console.error('Suggested Users div has no parent node');
+            }
         })
         .catch((error) => {
             console.error('Error fetching Trending Topics HTML:', error);
