@@ -1,5 +1,9 @@
 
 function addTrendingTopics() {
+    const trendingTopicsAlreadyAdded = document.querySelector('.trending-topics');
+    if (trendingTopicsAlreadyAdded) {
+        return;
+    }
     const suggestedUsersDiv = document.querySelector('.r-sa2ff0');
     const trendingHtml = window.pluginAssets['opensky-plugin-default/html/trending-topics.html'];
 
@@ -73,18 +77,16 @@ function initTrendingTopics() {
         }
 
         // Observe DOM changes and reapply if necessary
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                addTrendingTopics();
-            });
-        });
+        // const observer = new MutationObserver((mutations) => {
+        //     mutations.forEach((mutation) => {
+        //         addTrendingTopics();
+        //     });
+        // });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-        });
-    } else {
-        console.error('Trending Topics script not executed');
+        // observer.observe(document.body, {
+        //     childList: true,
+        //     subtree: true,
+        // });
     }
 }
 
