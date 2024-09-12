@@ -4,7 +4,11 @@ function addTrendingTopics() {
     if (trendingTopicsAlreadyAdded) {
         return;
     }
-    const suggestedUsersDiv = document.querySelector('.r-sa2ff0');
+
+    let suggestedUsersDiv = document.querySelector('div.r-1d5kdc7:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)');
+    if(!suggestedUsersDiv) {
+        suggestedUsersDiv = document.querySelector('.r-sa2ff0');    
+    }
     const trendingHtml = window.pluginAssets['opensky-plugin-default/html/trending-topics.html'];
 
     if (!suggestedUsersDiv || !trendingHtml) {
