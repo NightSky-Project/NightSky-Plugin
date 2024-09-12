@@ -1,6 +1,7 @@
 {
     "manifest_version": 1,
     "name": "OpenSky Plugin Default",
+    "slug": "opensky-plugin-default",
     "description": "Default plugin to apply some changes for improving the user experience.",
     "version": "1.0.0",
     "version_code": 1,

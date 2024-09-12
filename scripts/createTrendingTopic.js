@@ -1,7 +1,7 @@
 
 function addTrendingTopics() {
     const suggestedUsersDiv = document.querySelector('.r-sa2ff0');
-    const trendingHtml = window.pluginAssets['pluginTest/html/trending-topics.html'];
+    const trendingHtml = window.pluginAssets['opensky-plugin-default/html/trending-topics.html'];
 
     if (!suggestedUsersDiv || !trendingHtml) {
         return;
