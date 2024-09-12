@@ -50,7 +50,6 @@ function addTrendingTopics() {
 
     window.receiveResource = function(path, content) {
         if (trendingDiv.innerHTML === content) {
-            console.log('Trending topics content is already up-to-date.');
             return;
         }
 
@@ -60,11 +59,7 @@ function addTrendingTopics() {
         if (suggestedUsersDiv.parentNode) {
             if (!document.contains(trendingDiv)) {
                 suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-            } else {
-                console.log('Trending topics div is already inserted.');
             }
-        } else {
-            console.error('Suggested Users div has no parent node');
         }
     }
 
