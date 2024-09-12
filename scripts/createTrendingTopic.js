@@ -40,11 +40,17 @@ function addTrendingTopics() {
 
     // Create the new div for Trending Topics
     const trendingDiv = document.createElement('div');
-    trendingDiv.innerHTML = trendingHtml; 
-    trendingDiv.classList.add('css-175oi2r');
+    fetch(trendingHtml) 
+        .then((response) => response.text())
+        .then((data) => {
+            trendingDiv.innerHTML = data; 
+            trendingDiv.classList.add('css-175oi2r'); 
 
-    // Insert the new Trending Topics div before the suggested users div
-    suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+            suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+        })
+        .catch((error) => {
+            console.error('Error fetching Trending Topics HTML:', error);
+        });
 }
 
 function isRootUrl() {
