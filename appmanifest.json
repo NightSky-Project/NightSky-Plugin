@@ -4,10 +4,10 @@
     "description": "A simple test plugin to demonstrate loading and execution.",
     "version": "1.0.0",
     "version_code": 1,
-    "icon": "icon.png",
+    "icon": "assets/icon.png",
     "content": {
-        "scripts": ["scripts/testPlugin.js", "scripts/replaceIcon.js"],
-        "styles": ["styles/testPlugin.css"],
+        "scripts": ["scripts/changeLogoColor.js"],
+        "styles": ["styles/pluginStyles.css"],
         "assets": ["assets/icon.png"]
     }
 }
