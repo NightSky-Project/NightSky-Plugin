@@ -44,5 +44,8 @@
         }
     }
 
-    changeSvgIcon();
+    // Run after the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', changeSvgIcon);
+    window.addEventListener('load', changeSvgIcon);
+
 })();
