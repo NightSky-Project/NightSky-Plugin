@@ -1,13 +1,10 @@
 .trending-topics {
-    font-family: Arial, sans-serif;
-    /* color: #1DA1F2; */
     padding: 20px;
 }
 
 .trending-topics h2 {
     font-size: 20px;
     margin-bottom: 10px;
-    /* color: #14171A; */
 }
 
 .trending-topics ul {
@@ -17,11 +14,11 @@
 }
 
 .trending-topics li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: block;
+    justify-content: center;
+    align-items: flex-start;
     padding: 10px 0;
-    border-bottom: 1px solid #E1E8ED;
+    border-bottom: 1px solid #e1e8ed21;
 }
 
 .trending-topics li:last-child {
@@ -29,17 +26,16 @@
 }
 
 .trend-rank {
-    font-weight: bold;
-    /* color: #657786; */
     margin-right: 10px;
+    font-size: 14px;
 }
 
 .trend-name {
     flex-grow: 1;
     font-weight: bold;
-    /* color: #14171A; */
+    font-size: 18px;
 }
 
 /* .trend-posts {
-    color: #657786;
+
 } */

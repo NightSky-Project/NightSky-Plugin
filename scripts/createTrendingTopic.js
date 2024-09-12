@@ -31,7 +31,6 @@ function addTrendingTopics() {
         // Check if there is a single div with a single button inside
         const button = child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON';
 
-        // If the button is found, mark to stop removing subsequent divs
         if (button) {
             keep = false;
         }
@@ -41,7 +40,7 @@ function addTrendingTopics() {
     const trendingDiv = document.createElement('div');
 
     function requestResource(pluginSlug, resource) {
-        // Enviar uma mensagem para o React Native para buscar o recurso
+        // Send a message to the WebView to fetch the resource
         window.ReactNativeWebView.postMessage(JSON.stringify({
             messageType: 'FETCH_RESOURCE',
             pluginSlug: pluginSlug,
@@ -69,7 +68,6 @@ function addTrendingTopics() {
         }
     }
 
-    // Request the trending topics resource
     requestResource('opensky-plugin-default', 'trending-topics.html');
 }
 
@@ -105,18 +103,6 @@ function initTrendingTopics() {
             document.addEventListener('DOMContentLoaded', addTrendingTopics);
             window.addEventListener('load', addTrendingTopics);
         }
-
-        // Observe DOM changes and reapply if necessary
-        // const observer = new MutationObserver((mutations) => {
-        //     mutations.forEach((mutation) => {
-        //         addTrendingTopics();
-        //     });
-        // });
-
-        // observer.observe(document.body, {
-        //     childList: true,
-        //     subtree: true,
-        // });
     }
 }
 

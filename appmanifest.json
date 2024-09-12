@@ -9,6 +9,6 @@
     "content": {
         "scripts": ["scripts/changeLogoColor.js", "scripts/createTrendingTopic.js"],
         "styles": ["styles/trending-topics-style.css"],
-        "assets": ["assets/icon.png", "html/trending-topics.html"]
+        "resources": ["assets/icon.png", "html/trending-topics.html"]
     }
 }
