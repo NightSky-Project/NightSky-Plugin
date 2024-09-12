@@ -44,10 +44,12 @@
         }
     }
 
+
     function isRootUrl() { // Check if the current URL is the root that contains the SVG logo
         return window.location.pathname === '/';
     }
 
+    // Grants that the script will apply changes correctly after the page is fully loaded or when the DOM changes
     if (isRootUrl()) {
         if (document.readyState === 'complete') {
             changeSvgIcon();
