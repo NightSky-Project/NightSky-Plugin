@@ -4,6 +4,12 @@ function addTrendingTopics() {
     const trendingHtml = window.pluginAssets['opensky-plugin-default/html/trending-topics.html'];
 
     if (!suggestedUsersDiv || !trendingHtml) {
+        if(!suggestedUsersDiv) {
+            console.error('Suggested Users div not found');
+        }
+        if(!trendingHtml) {
+            console.error('Trending Topics HTML not found');
+        }
         return;
     }
 
@@ -57,4 +63,7 @@ if (isRootUrl()) {
         childList: true,
         subtree: true,
     });
+}
+else {
+    console.error('Trending Topics script not executed');
 }
