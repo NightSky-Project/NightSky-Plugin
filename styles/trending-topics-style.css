@@ -14,11 +14,13 @@
 }
 
 .trending-topics li {
-    display: block;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: flex-start;
     padding: 10px 0;
     border-bottom: 1px solid #e1e8ed21;
+    gap: 5px;
 }
 
 .trending-topics li:last-child {
@@ -36,6 +38,6 @@
     font-size: 18px;
 }
 
-/* .trend-posts {
-
-} */
+.trend-posts {
+    font-size: 14px;
+}
