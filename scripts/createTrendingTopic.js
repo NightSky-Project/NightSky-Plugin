@@ -40,9 +40,14 @@ function addTrendingTopics() {
 
     // Create the new div for Trending Topics
     const trendingDiv = document.createElement('div');
+    console.log('trendingHtml: ', trendingHtml);
     fetch(trendingHtml) 
-        .then((response) => response.text())
+        .then((response) => {
+            console.log('response: ', response);
+            response.text();
+        })
         .then((data) => {
+            console.log('data: ', data);
             trendingDiv.innerHTML = data; 
             trendingDiv.classList.add('css-175oi2r'); 
 
@@ -87,16 +92,16 @@ function initTrendingTopics() {
         }
 
         // Observe DOM changes and reapply if necessary
-        // const observer = new MutationObserver((mutations) => {
-        //     mutations.forEach((mutation) => {
-        //         addTrendingTopics();
-        //     });
-        // });
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                addTrendingTopics();
+            });
+        });
 
-        // observer.observe(document.body, {
-        //     childList: true,
-        //     subtree: true,
-        // });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+        });
     }
 }
 
