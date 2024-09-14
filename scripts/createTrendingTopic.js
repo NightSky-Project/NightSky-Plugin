@@ -63,7 +63,7 @@ function addTrendingTopics() {
         }
     }
 
-    requestResource('opensky-plugin-default', 'trending-topics.html');
+    requestResource('nightsky-plugin-default', 'trending-topics.html');
 }
 
 function isRootUrl() {
