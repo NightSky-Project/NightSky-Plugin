@@ -1,10 +1,6 @@
 {
-    "manifest_version": 1,
     "name": "NightSky-Plugin",
     "slug": "nightsky-plugin-default",
-    "description": "Default plugin to apply some changes for improving the user experience.",
-    "version": "1.0.0",
-    "version_code": 1,
     "icon": "assets/icon.png",
     "content": {
         "scripts": ["scripts/changeLogoColor.js", "scripts/createTrendingTopic.js"],
