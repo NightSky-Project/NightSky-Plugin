@@ -78,7 +78,8 @@ async function getTrends() {
             if (!content) {
                 return;
             }
-            
+            console.log('name', name);
+            console.log('content', content);
             if(name === 'nightsky-plugin-default-trends') {
                 savedTrends = JSON.parse(content);
                 timeSavedTrends = savedTrends.time;
