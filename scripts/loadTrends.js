@@ -92,6 +92,7 @@ async function getTrends() {
                     console.log('Fetched trends:', parsedContent);
                     if(parsedContent.trends && parsedContent.trends[lang]) {
                         const langTrends = parsedContent.trends[lang];
+                        console.log('Lang trends:', langTrends);
                         trends = [
                             ...(langTrends.words || []),
                             ...(langTrends.phrases || []),
@@ -179,7 +180,6 @@ function isRootUrl() {
     return window.location.pathname === '/search';
 }
 
-// Observe URL changes and reapply if necessary
 function onUrlChange(callback) {
     let oldHref = document.location.href;
 
@@ -200,7 +200,6 @@ function onUrlChange(callback) {
     return observer;
 }
 
-// Grants that the script will apply changes correctly after the page is fully loaded or when the DOM changes
 function initTrendingTopics() {
     if (isRootUrl()) {
         if (!initTrendingTopics.called) {
@@ -212,21 +211,24 @@ function initTrendingTopics() {
     }
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     if (!initTrendingTopics.called) {
         initTrendingTopics();
     }
 });
 
-// Reinitialize on URL change
 const observer = onUrlChange(() => {
     if (!initTrendingTopics.called) {
         initTrendingTopics();
     }
 });
 
-// Disconnect observer when not needed
+window.addEventListener('beforeunload', () => {
+    observer.disconnect();
+});
+
+initTrendingTopics.called = false;
+
 window.addEventListener('beforeunload', () => {
     observer.disconnect();
 });
