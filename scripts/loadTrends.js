@@ -75,6 +75,8 @@ async function getTrends() {
         let trends = [];
         let savedTrends = [];
         let timeSavedTrends = 0;
+        let displayedTrends = 6;
+        const totalTrends = trends.length;
 
         window.receiveData = function(name, content) {
             if (!content || Object.keys(content).length === 0) {
@@ -159,36 +161,33 @@ async function getTrends() {
     
             return trendElement;
         }
-    
-        let displayedTrends = 6;
-        const totalTrends = trends.length;
         
         function displayTrends() {
             // verifica se as varivaies existem
             try {
                 console.log('Displaying trends:', trends);
             } catch (error) {
-                console.error('Erro ao exibir tendências:', error);
+                console.error('Erro ao exibir trends:', error);
             }
             try {
                 console.log('Displaying displayedTrends:', displayedTrends);
             } catch (error) {
-                console.error('Erro ao exibir tendências:', error);
+                console.error('Erro ao exibir displayedTrends:', error);
             }
             try {
                 console.log('Displaying totalTrends:', totalTrends);
             } catch (error) {
-                console.error('Erro ao exibir tendências:', error);
+                console.error('Erro ao exibir totalTrends:', error);
             }
             try {
                 console.log('Displaying trendingTopicsDiv:', trendingTopicsDiv);
             } catch (error) {
-                console.error('Erro ao exibir tendências:', error);
+                console.error('Erro ao exibir trendingTopicsDiv:', error);
             }
             try {
                 console.log('Displaying translations:', translations);
             } catch (error) {
-                console.error('Erro ao exibir tendências:', error);
+                console.error('Erro ao exibir translations:', error);
             }
 
             try {
