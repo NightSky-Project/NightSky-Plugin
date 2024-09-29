@@ -104,7 +104,12 @@ async function getTrends() {
                 }
                 console.log('Trends after processing:', trends);
                 console.log('Saved trends after processing:', savedTrends);
-                displayTrends();
+                try{
+                    displayTrends();
+                }
+                catch(error){
+                    console.error('Error displaying trends:', error);
+                }
             } catch (error) {
                 console.error('Error parsing content:', error);
             }
@@ -173,7 +178,6 @@ async function getTrends() {
             }
         }
 
-        displayTrends();
     } catch (error) {
         console.error('Error fetching trends:', error);
     }
@@ -215,15 +219,11 @@ function initTrendingTopics() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (!initTrendingTopics.called) {
-        initTrendingTopics();
-    }
+    initTrendingTopics();
 });
 
 const observer = onUrlChange(() => {
-    if (!initTrendingTopics.called) {
-        initTrendingTopics();
-    }
+    initTrendingTopics();
 });
 
 window.addEventListener('beforeunload', () => {
@@ -231,7 +231,3 @@ window.addEventListener('beforeunload', () => {
 });
 
 initTrendingTopics.called = false;
-
-window.addEventListener('beforeunload', () => {
-    observer.disconnect();
-});
