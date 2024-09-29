@@ -82,9 +82,9 @@ async function getTrends() {
                 console.log('Received data:', content);
                 const parsedContent = JSON.parse(content);
                 if(name === 'nightsky-plugin-default-trends') {
-                    savedTrends = parsedContent;
+                    savedTrends = parsedContent.trends || [];
                     console.log('Saved trends:', savedTrends);
-                    timeSavedTrends = savedTrends.time;
+                    timeSavedTrends = parsedContent.time || 0;
                 }
                 if(name === 'nightsky-plugin-default-fetch-trends') {
                     console.log('Fetched trends:', parsedContent);
@@ -199,7 +199,12 @@ function onUrlChange(callback) {
 // Grants that the script will apply changes correctly after the page is fully loaded or when the DOM changes
 function initTrendingTopics() {
     if (isRootUrl()) {
-        getTrends();
+        if (!initTrendingTopics.called) {
+            getTrends();
+            initTrendingTopics.called = true;
+        }
+    } else {
+        initTrendingTopics.called = false;
     }
 }
 
