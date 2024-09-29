@@ -164,6 +164,33 @@ async function getTrends() {
         const totalTrends = trends.length;
         
         function displayTrends() {
+            // verifica se as varivaies existem
+            try {
+                console.log('Displaying trends:', trends);
+            } catch (error) {
+                console.error('Erro ao exibir tendências:', error);
+            }
+            try {
+                console.log('Displaying displayedTrends:', displayedTrends);
+            } catch (error) {
+                console.error('Erro ao exibir tendências:', error);
+            }
+            try {
+                console.log('Displaying totalTrends:', totalTrends);
+            } catch (error) {
+                console.error('Erro ao exibir tendências:', error);
+            }
+            try {
+                console.log('Displaying trendingTopicsDiv:', trendingTopicsDiv);
+            } catch (error) {
+                console.error('Erro ao exibir tendências:', error);
+            }
+            try {
+                console.log('Displaying translations:', translations);
+            } catch (error) {
+                console.error('Erro ao exibir tendências:', error);
+            }
+
             try {
                 console.log('Displaying trends:', trends, displayedTrends, totalTrends);
                 if (!trends || trends.length === 0) {
