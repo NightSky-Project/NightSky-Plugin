@@ -70,69 +70,6 @@ async function getTrends() {
         }));
     }
 
-    function createTrendElement(trend, index) {
-        const trendElement = document.createElement('li');
-        const trendRank = document.createElement('span');
-        const trendName = document.createElement('span');
-        const trendPosts = document.createElement('span');
-
-        trendRank.className = 'trend-rank';
-        trendName.className = 'trend-name';
-        trendPosts.className = 'trend-posts';
-
-        const categoryTranslation = translations.categories[trend.category][lang];
-        trendRank.textContent = `${index + 1} - ${categoryTranslation}`;
-        trendName.textContent = trend.topic.startsWith('#') ? trend.topic : `#${trend.topic}`;
-        trendPosts.textContent = `${(trend.count / 1000).toFixed(1)}${translations.posts[lang]}`;
-
-        trendElement.appendChild(trendRank);
-        trendElement.appendChild(trendName);
-        trendElement.appendChild(trendPosts);
-
-        const searchUrl = `https://bsky.app/search?q=${encodeURIComponent(trend.topic)}`;
-        trendElement.addEventListener('click', () => {
-            window.location.href = searchUrl;
-        });
-
-        return trendElement;
-    }
-
-    let displayedTrends = 6;
-    const totalTrends = trends.length;
-    
-    function displayTrends(trends) {
-        try {
-            console.log('Displaying trends:', trends, displayedTrends, totalTrends);
-            if (!trends || trends.length === 0) {
-                return;
-            }
-            const ul = document.createElement('ul');
-            for (let i = 0; i < displayedTrends && i < totalTrends; i++) {
-                ul.appendChild(createTrendElement(trends[i], i));
-            }
-            if (!translations || !translations.trendingTopics || !translations.trendingTopics[lang]) {
-                throw new Error('Traduções não disponíveis');
-            }
-            trendingTopicsDiv.innerHTML = `<h2>${translations.trendingTopics[lang]}</h2>`;
-            trendingTopicsDiv.appendChild(ul);
-    
-            if (displayedTrends < totalTrends) {
-                const showMoreButton = document.createElement('button');
-                if (!translations.showMore || !translations.showMore[lang]) {
-                    throw new Error('Traduções não disponíveis');
-                }
-                showMoreButton.textContent = translations.showMore[lang];
-                showMoreButton.addEventListener('click', () => {
-                    displayedTrends += 6;
-                    displayTrends(trends);
-                });
-                trendingTopicsDiv.appendChild(showMoreButton);
-            }
-        } catch (error) {
-            console.error('Erro ao exibir tendências:', error);
-        }
-    }
-
     try {
         let trends = [];
         let savedTrends = [];
@@ -155,8 +92,9 @@ async function getTrends() {
                             ...(langTrends.hashtags || []),
                             ...(langTrends.globalWords || [])
                         ];
+                        trends = savedTrends;
                         timeSavedTrends = parsedContent.time;
-                        displayTrends(savedTrends);
+                        displayTrends();
                     }
                 }
                 if(name === 'nightsky-plugin-default-fetch-trends') {
@@ -170,7 +108,7 @@ async function getTrends() {
                             ...(langTrends.globalWords || [])
                         ];
                         saveTrends('nightsky-plugin-default', trends);
-                        displayTrends(trends);
+                        displayTrends();
                     }
                 }
                 
@@ -193,6 +131,69 @@ async function getTrends() {
         if (trends.length === 0 && savedTrends.length === 0) {
             trendingTopicsDiv.innerHTML = `<h2>${translations.trendingTopics[lang]}</h2>`;
             return;
+        }
+
+        function createTrendElement(trend, index) {
+            const trendElement = document.createElement('li');
+            const trendRank = document.createElement('span');
+            const trendName = document.createElement('span');
+            const trendPosts = document.createElement('span');
+    
+            trendRank.className = 'trend-rank';
+            trendName.className = 'trend-name';
+            trendPosts.className = 'trend-posts';
+    
+            const categoryTranslation = translations.categories[trend.category][lang];
+            trendRank.textContent = `${index + 1} - ${categoryTranslation}`;
+            trendName.textContent = trend.topic.startsWith('#') ? trend.topic : `#${trend.topic}`;
+            trendPosts.textContent = `${(trend.count / 1000).toFixed(1)}${translations.posts[lang]}`;
+    
+            trendElement.appendChild(trendRank);
+            trendElement.appendChild(trendName);
+            trendElement.appendChild(trendPosts);
+    
+            const searchUrl = `https://bsky.app/search?q=${encodeURIComponent(trend.topic)}`;
+            trendElement.addEventListener('click', () => {
+                window.location.href = searchUrl;
+            });
+    
+            return trendElement;
+        }
+    
+        let displayedTrends = 6;
+        const totalTrends = trends.length;
+        
+        function displayTrends() {
+            try {
+                console.log('Displaying trends:', trends, displayedTrends, totalTrends);
+                if (!trends || trends.length === 0) {
+                    return;
+                }
+                const ul = document.createElement('ul');
+                for (let i = 0; i < displayedTrends && i < totalTrends; i++) {
+                    ul.appendChild(createTrendElement(trends[i], i));
+                }
+                if (!translations || !translations.trendingTopics || !translations.trendingTopics[lang]) {
+                    throw new Error('Traduções não disponíveis');
+                }
+                trendingTopicsDiv.innerHTML = `<h2>${translations.trendingTopics[lang]}</h2>`;
+                trendingTopicsDiv.appendChild(ul);
+        
+                if (displayedTrends < totalTrends) {
+                    const showMoreButton = document.createElement('button');
+                    if (!translations.showMore || !translations.showMore[lang]) {
+                        throw new Error('Traduções não disponíveis');
+                    }
+                    showMoreButton.textContent = translations.showMore[lang];
+                    showMoreButton.addEventListener('click', () => {
+                        displayedTrends += 6;
+                        displayTrends(trends);
+                    });
+                    trendingTopicsDiv.appendChild(showMoreButton);
+                }
+            } catch (error) {
+                console.error('Erro ao exibir tendências:', error);
+            }
         }
 
     } catch (error) {
