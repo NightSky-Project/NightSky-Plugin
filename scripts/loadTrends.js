@@ -2,6 +2,7 @@ async function getTrends() {
     let apiFetched = false;
     const trendingTopicsDiv = document.querySelector('.trending-topics');
     if (!trendingTopicsDiv) {
+        console.warn('Trending Topics div not found');
         setTimeout(getTrends, 1000);
     }
     const lang = navigator.language.startsWith('pt') ? 'pt' : 'en';
@@ -85,9 +86,18 @@ async function getTrends() {
                 timeSavedTrends = savedTrends.time;
             }
             if(name === 'nightsky-plugin-default-fetch-trends') {
-                if(content.trends) {
-                    trends = [...content.trends[lang].words, ...content.trends[lang].phrases, ...content.trends[lang].hashtags, ...content.trends[lang].globalWords];
-                    saveTrends('nightsky-plugin-default', trends);
+                const parsedContent = JSON.parse(content);
+                if(parsedContent.trends) {
+                    if (parsedContent.trends && parsedContent.trends[lang]) {
+                        const langTrends = parsedContent.trends[lang];
+                        trends = [
+                            ...(langTrends.words || []),
+                            ...(langTrends.phrases || []),
+                            ...(langTrends.hashtags || []),
+                            ...(langTrends.globalWords || [])
+                        ];
+                        saveTrends('nightsky-plugin-default', trends);
+                    }
                 }
             }
         }
@@ -169,7 +179,7 @@ function onUrlChange(callback) {
     let oldHref = document.location.href;
 
     const body = document.querySelector("body");
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(() => {
         if (oldHref !== document.location.href) {
             oldHref = document.location.href;
             callback();
