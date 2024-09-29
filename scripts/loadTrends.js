@@ -1,4 +1,5 @@
 async function getTrends() {
+    let apiFetched = false;
     const trendingTopicsDiv = document.querySelector('.trending-topics');
     if (!trendingTopicsDiv) {
         setTimeout(getTrends, 1000);
@@ -60,31 +61,43 @@ async function getTrends() {
         }));
     }
 
+    function fetchTrendsApi(pluginSlug) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+            messageType: 'FETCH_API',
+            name: `${pluginSlug}-fetch-trends`,
+            url: apiUrl,
+        }));
+    }
+
     try {
         let trends = [];
         let savedTrends = [];
         let timeSavedTrends = 0;
 
-        window.receiveData = function(slug, content) {
+        window.receiveData = function(name, content) {
             if (!content) {
                 return;
             }
-            savedTrends = JSON.parse(content.data);
-            timeSavedTrends = content.time;
+            
+            if(name === 'nightsky-plugin-default-trends') {
+                savedTrends = JSON.parse(content);
+                timeSavedTrends = savedTrends.time;
+            }
+            if(name === 'nightsky-plugin-default-fetch-trends') {
+                if(content.trends) {
+                    trends = [...content.trends[lang].words, ...content.trends[lang].phrases, ...content.trends[lang].hashtags, ...content.trends[lang].globalWords];
+                    saveTrends('nightsky-plugin-default', trends);
+                }
+            }
         }
 
         requestSavedTrends('nightsky-plugin-default', 'trending-topics');
 
         if(savedTrends.length === 0 || Date.now() - timeSavedTrends > 1000 * 60 * 10) {
-            const response = await fetch(apiUrl).catch((error) => {
-                console.error('Error fetching trends:', error);
-            });
-            console.log('response', response);
-    
-            response.json().then((data) => {
-                trends = [...data[lang].words, ...data[lang].phrases, ...data[lang].hashtags, ...data[lang].globalWords];
-                saveTrends('nightsky-plugin-default', trends);
-            });
+            if (!apiFetched) {
+                fetchTrendsApi('nightsky-plugin-default');
+                apiFetched = true; // Set the control variable to true after fetching
+            }
         }
 
         if (trends.length === 0 && savedTrends.length === 0) {
