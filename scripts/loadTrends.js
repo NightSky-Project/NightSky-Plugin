@@ -102,6 +102,9 @@ async function getTrends() {
                         saveTrends('nightsky-plugin-default', trends);
                     }
                 }
+                console.log('Trends after processing:', trends);
+                console.log('Saved trends after processing:', savedTrends);
+                displayTrends();
             } catch (error) {
                 console.error('Error parsing content:', error);
             }
