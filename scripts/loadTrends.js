@@ -81,11 +81,9 @@ async function getTrends() {
                 return;
             }
             try {
-                console.log('Received data:', content);
                 const parsedContent = typeof content === 'string' ? JSON.parse(content) : content;
                 if(name === 'nightsky-plugin-default-trends') {
                     savedTrends = parsedContent.trends || [];
-                    console.log('Saved trends:', savedTrends);
                     timeSavedTrends = parsedContent.time || 0;
                 }
                 if(name === 'nightsky-plugin-default-fetch-trends') {
@@ -100,16 +98,11 @@ async function getTrends() {
                             ...(langTrends.globalWords || [])
                         ];
                         saveTrends('nightsky-plugin-default', trends);
+                        displayTrends(); // Move displayTrends here
                     }
                 }
                 console.log('Trends after processing:', trends);
                 console.log('Saved trends after processing:', savedTrends);
-                try{
-                    displayTrends();
-                }
-                catch(error){
-                    console.error('Error displaying trends:', error);
-                }
             } catch (error) {
                 console.error('Error parsing content:', error);
             }
@@ -160,6 +153,9 @@ async function getTrends() {
         }
 
         function displayTrends() {
+            if(trends.length === 0) {
+                return;
+            }
             const ul = document.createElement('ul');
             for (let i = 0; i < displayedTrends && i < totalTrends; i++) {
                 ul.appendChild(createTrendElement(trends[i], i));
