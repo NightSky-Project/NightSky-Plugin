@@ -76,13 +76,13 @@ async function getTrends() {
         let timeSavedTrends = 0;
 
         window.receiveData = function(name, content) {
-            if (!content) {
+            if (!content || Object.keys(content).length === 0) {
                 console.warn('Received empty content');
                 return;
             }
             try {
                 console.log('Received data:', content);
-                const parsedContent = JSON.parse(content);
+                const parsedContent = typeof content === 'string' ? JSON.parse(content) : content;
                 if(name === 'nightsky-plugin-default-trends') {
                     savedTrends = parsedContent.trends || [];
                     console.log('Saved trends:', savedTrends);
@@ -196,6 +196,8 @@ function onUrlChange(callback) {
     window.addEventListener('popstate', () => {
         callback();
     });
+
+    return observer;
 }
 
 // Grants that the script will apply changes correctly after the page is fully loaded or when the DOM changes
@@ -218,8 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Reinitialize on URL change
-onUrlChange(() => {
+const observer = onUrlChange(() => {
     if (!initTrendingTopics.called) {
         initTrendingTopics();
     }
+});
+
+// Disconnect observer when not needed
+window.addEventListener('beforeunload', () => {
+    observer.disconnect();
 });
