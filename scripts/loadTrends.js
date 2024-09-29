@@ -6,7 +6,6 @@ async function getTrends() {
         setTimeout(getTrends, 1000);
     }
     const lang = navigator.language.startsWith('pt') ? 'pt' : 'en';
-    console.log('lang', lang);
     const apiUrl = `https://bsky-trends.deno.dev/trend?lang=${lang}`;
 
     const translations = {
@@ -79,14 +78,14 @@ async function getTrends() {
             if (!content) {
                 return;
             }
-            console.log('name', name);
-            console.log('content', content);
             if(name === 'nightsky-plugin-default-trends') {
                 savedTrends = JSON.parse(content);
+                console.log('Saved trends:', savedTrends);
                 timeSavedTrends = savedTrends.time;
             }
             if(name === 'nightsky-plugin-default-fetch-trends') {
                 const parsedContent = JSON.parse(content);
+                console.log('Fetched trends:', parsedContent);
                 if(parsedContent.trends) {
                     if (parsedContent.trends && parsedContent.trends[lang]) {
                         const langTrends = parsedContent.trends[lang];
@@ -112,6 +111,7 @@ async function getTrends() {
         }
 
         if (trends.length === 0 && savedTrends.length === 0) {
+            trendingTopicsDiv.innerHTML = `<h2>${translations.trendingTopics[lang]}</h2>`;
             return;
         }
         
@@ -196,17 +196,12 @@ function onUrlChange(callback) {
 // Grants that the script will apply changes correctly after the page is fully loaded or when the DOM changes
 function initTrendingTopics() {
     if (isRootUrl()) {
-        if (document.readyState === 'complete') {
-            getTrends();
-        } else {
-            document.addEventListener('DOMContentLoaded', getTrends);
-            window.addEventListener('load', getTrends);
-        }
+        getTrends();
     }
 }
 
 // Initialize on page load
-initTrendingTopics();
+document.addEventListener('DOMContentLoaded', initTrendingTopics);
 
 // Reinitialize on URL change
 onUrlChange(initTrendingTopics);
