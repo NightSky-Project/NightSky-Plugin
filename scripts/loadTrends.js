@@ -4,6 +4,7 @@ async function getTrends() {
     if (!trendingTopicsDiv) {
         console.warn('Trending Topics div not found');
         setTimeout(getTrends, 1000);
+        return;
     }
     const lang = navigator.language.startsWith('pt') ? 'pt' : 'en';
     const apiUrl = `https://bsky-trends.deno.dev/trend?lang=${lang}`;
@@ -76,6 +77,7 @@ async function getTrends() {
 
         window.receiveData = function(name, content) {
             if (!content) {
+                console.warn('Received empty content');
                 return;
             }
             try {
@@ -209,7 +211,15 @@ function initTrendingTopics() {
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', initTrendingTopics);
+document.addEventListener('DOMContentLoaded', () => {
+    if (!initTrendingTopics.called) {
+        initTrendingTopics();
+    }
+});
 
 // Reinitialize on URL change
-onUrlChange(initTrendingTopics);
+onUrlChange(() => {
+    if (!initTrendingTopics.called) {
+        initTrendingTopics();
+    }
+});
