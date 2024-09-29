@@ -146,14 +146,23 @@ async function getTrends() {
             try {
                 const parsedContent = typeof content === 'string' ? JSON.parse(content) : content;
                 if(name === 'nightsky-plugin-default-trends') {
-                    savedTrends = parsedContent.trends || [];
-                    timeSavedTrends = parsedContent.time || 0;
+                    console.log('Received trends:', parsedContent);
+                    if(parsedContent.trends && parsedContent.trends[lang]) {
+                        const langTrends = parsedContent.trends[lang];
+                        savedTrends = [
+                            ...(langTrends.words || []),
+                            ...(langTrends.phrases || []),
+                            ...(langTrends.hashtags || []),
+                            ...(langTrends.globalWords || [])
+                        ];
+                        timeSavedTrends = parsedContent.time;
+                        displayTrends(savedTrends);
+                    }
                 }
                 if(name === 'nightsky-plugin-default-fetch-trends') {
                     console.log('Fetched trends:', parsedContent);
                     if(parsedContent.trends && parsedContent.trends[lang]) {
                         const langTrends = parsedContent.trends[lang];
-                        console.log('Lang trends:', langTrends);
                         trends = [
                             ...(langTrends.words || []),
                             ...(langTrends.phrases || []),
@@ -164,6 +173,7 @@ async function getTrends() {
                         displayTrends(trends);
                     }
                 }
+                
                 console.log('Trends after processing:', trends);
                 console.log('Saved trends after processing:', savedTrends);
             } catch (error) {
