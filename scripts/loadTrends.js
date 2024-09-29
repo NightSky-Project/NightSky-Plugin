@@ -6,6 +6,7 @@ async function getTrends() {
         setTimeout(getTrends, 1000);
         return;
     }
+    console.log('Trending Topics div found:', trendingTopicsDiv);
     const lang = navigator.language.startsWith('pt') ? 'pt' : 'en';
     const apiUrl = `https://bsky-trends.deno.dev/trend?lang=${lang}`;
 
@@ -77,7 +78,6 @@ async function getTrends() {
 
         window.receiveData = function(name, content) {
             if (!content || Object.keys(content).length === 0) {
-                console.warn('Received empty content');
                 return;
             }
             try {
@@ -94,6 +94,8 @@ async function getTrends() {
                         ];
                         trends = savedTrends;
                         timeSavedTrends = parsedContent.time;
+                        console.log('Trends after processing:', trends);
+                        console.log('Saved trends after processing:', savedTrends);
                         displayTrends();
                     }
                 }
@@ -108,12 +110,10 @@ async function getTrends() {
                             ...(langTrends.globalWords || [])
                         ];
                         saveTrends('nightsky-plugin-default', trends);
+                        console.log('Trends after processing:', trends);
                         displayTrends();
                     }
                 }
-                
-                console.log('Trends after processing:', trends);
-                console.log('Saved trends after processing:', savedTrends);
             } catch (error) {
                 console.error('Error parsing content:', error);
             }
@@ -187,7 +187,7 @@ async function getTrends() {
                     showMoreButton.textContent = translations.showMore[lang];
                     showMoreButton.addEventListener('click', () => {
                         displayedTrends += 6;
-                        displayTrends(trends);
+                        displayTrends();
                     });
                     trendingTopicsDiv.appendChild(showMoreButton);
                 }
