@@ -1,4 +1,3 @@
-
 function addTrendingTopics() {
     const trendingTopicsAlreadyAdded = document.querySelector('.trending-topics');
     if (trendingTopicsAlreadyAdded) {
@@ -13,9 +12,6 @@ function addTrendingTopics() {
     if (!suggestedUsersDiv) {
         if(!suggestedUsersDiv) {
             console.error('Suggested Users div not found');
-        }
-        if(!trendingHtml) {
-            console.error('Trending Topics HTML not found');
         }
         return;
     }
@@ -38,32 +34,37 @@ function addTrendingTopics() {
 
     // Create the new div for Trending Topics
     const trendingDiv = document.createElement('div');
+    trendingDiv.classList.add('trending-topics');
+    trendingDiv.classList.add('css-175oi2r');
+    suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
 
-    function requestResource(pluginSlug, resource) {
-        // Send a message to the WebView to fetch the resource
-        window.ReactNativeWebView.postMessage(JSON.stringify({
-            messageType: 'FETCH_RESOURCE',
-            pluginSlug: pluginSlug,
-            resource: resource,
-        }));
-    }
 
-    window.receiveResource = function(path, content) {
-        if (trendingDiv.innerHTML === content) {
-            return;
-        }
+    /*Function to fetch external resources*/
+    // function requestResource(pluginSlug, resource) {
+    //     // Send a message to the WebView to fetch the resource
+    //     window.ReactNativeWebView.postMessage(JSON.stringify({
+    //         messageType: 'FETCH_RESOURCE',
+    //         pluginSlug: pluginSlug,
+    //         resource: resource,
+    //     }));
+    // }
 
-        trendingDiv.innerHTML = content;
-        trendingDiv.classList.add('css-175oi2r');
+    // window.receiveResource = function(path, content) {
+    //     if (trendingDiv.innerHTML === content) {
+    //         return;
+    //     }
 
-        if (suggestedUsersDiv.parentNode) {
-            if (!document.contains(trendingDiv)) {
-                suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-            }
-        }
-    }
+    //     trendingDiv.innerHTML = content;
+    //     trendingDiv.classList.add('css-175oi2r');
 
-    requestResource('nightsky-plugin-default', 'trending-topics.html');
+    //     if (suggestedUsersDiv.parentNode) {
+    //         if (!document.contains(trendingDiv)) {
+    //             suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+    //         }
+    //     }
+    // }
+
+    // requestResource('nightsky-plugin-default', 'trending-topics.html');
 }
 
 function isRootUrl() {

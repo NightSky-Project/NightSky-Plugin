@@ -3,8 +3,8 @@
     "slug": "nightsky-plugin-default",
     "icon": "assets/icon.png",
     "content": {
-        "scripts": ["scripts/changeLogoColor.js", "scripts/createTrendingTopic.js"],
+        "scripts": ["scripts/loadTrends.js", "scripts/createTrendingTopic.js"],
         "styles": ["styles/trending-topics-style.css"],
-        "resources": ["assets/icon.png", "html/trending-topics.html"]
+        "resources": []
     }
 }
