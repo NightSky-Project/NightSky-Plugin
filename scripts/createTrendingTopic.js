@@ -22,7 +22,7 @@ function addTrendingTopics() {
         isAddingTrendingTopics = false;
         return;
     }
-
+    console.log('Executing addTrendingTopics');
     // Keep all divs up to the div that contains the button and remove the subsequent ones
     let keep = true;
     let feedDivsRemoved = false;
