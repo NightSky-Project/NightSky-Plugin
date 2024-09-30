@@ -65,7 +65,7 @@ function isSearchUrl() {
     return window.location.pathname === '/search';
 }
 
-let called = false;
+var called = false;
 function onUrlChange() {
     const body = document.querySelector("body");
 
@@ -103,7 +103,6 @@ function onUrlChange() {
     observer.observe(body, { childList: true, subtree: true });
     window.addEventListener('popstate', () => {
         called = false;
-        onUrlChange();
     });
 }
 
