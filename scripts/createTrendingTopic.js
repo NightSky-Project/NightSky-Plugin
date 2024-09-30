@@ -37,6 +37,17 @@ function addTrendingTopics() {
     trendingDiv.classList.add('trending-topics');
     trendingDiv.classList.add('css-175oi2r');
     suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+    
+    function callGetTrends() {
+        try {
+            window.getTrends();
+        } catch (error) {
+            console.warn('Error calling getTrends', error);
+            setTimeout(callGetTrends, 1000);
+        }
+    }
+
+    callGetTrends();
 
 
     /*Function to fetch external resources*/
