@@ -77,6 +77,7 @@ function isSearchUrl() {
 
 var called = false;
 var observer;
+var initialLoad = true;
 
 function onUrlChange() {
     const body = document.querySelector("body");
@@ -107,6 +108,14 @@ function onUrlChange() {
         called = false;
         onUrlChange();
     });
+
+    if (initialLoad) {
+        initialLoad = false;
+        if (isSearchUrl()) {
+            window.addTrendingTopics();
+            called = true;
+        }
+    }
 }
 
 onUrlChange();
