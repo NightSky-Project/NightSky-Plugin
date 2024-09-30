@@ -45,6 +45,7 @@ function addTrendingTopics() {
     }
 
     function callGetTrends() {
+        console.log('removedFeeds: ', removedFeeds);
         if(!removedFeeds)return;
         try {
             if(!window.getTrends) {
@@ -67,6 +68,7 @@ function addTrendingTopics() {
 
 (function() {
     if(!window.addTrendingTopics){
+        removedFeeds = false;
         window.addTrendingTopics = addTrendingTopics;
     }
 })();
