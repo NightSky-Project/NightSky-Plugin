@@ -49,7 +49,7 @@ function addTrendingTopics() {
         if(!removedFeeds)return;
         try {
             if(!window.getTrends) {
-                setTimeout(callGetTrends, 500);
+                setTimeout(addTrendingTopics, 500);
                 return;
             }
             if(!document.querySelector('.trending-topics')) {
