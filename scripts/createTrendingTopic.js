@@ -50,7 +50,11 @@ function addTrendingTopics() {
     const trendingDiv = document.createElement('div');
     trendingDiv.classList.add('trending-topics');
     trendingDiv.classList.add('css-175oi2r');
-    suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+    if (suggestedUsersDiv.parentNode) {
+        suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+    } else {
+        console.error('Suggested Users div has no parent node');
+    }
 
     function callGetTrends() {
         try {
