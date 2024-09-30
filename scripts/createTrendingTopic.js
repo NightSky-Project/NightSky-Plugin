@@ -54,39 +54,42 @@ function addTrendingTopics() {
         }
     }
 
-    removeFeedDivs();
+    // Add a small delay to ensure all elements are present in the DOM
+    setTimeout(() => {
+        removeFeedDivs();
 
-    if (!feedDivsRemoved) {
-        console.error('Feed divs not removed');
-        isAddingTrendingTopics = false;
-        return;
-    }
-
-    // Create the new div for Trending Topics
-    const trendingDiv = document.createElement('div');
-    trendingDiv.classList.add('trending-topics');
-    trendingDiv.classList.add('css-175oi2r');
-
-    if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
-        suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-    } else {
-        console.error('Suggested Users div has no parent node');
-        isAddingTrendingTopics = false;
-        return;
-    }
-
-    function callGetTrends() {
-        try {
-            window.getTrends();
-        } catch (error) {
-            console.warn('Error calling getTrends', error);
-            setTimeout(callGetTrends, 1000);
-        } finally {
+        if (!feedDivsRemoved) {
+            console.error('Feed divs not removed');
             isAddingTrendingTopics = false;
+            return;
         }
-    }
 
-    callGetTrends();
+        // Create the new div for Trending Topics
+        const trendingDiv = document.createElement('div');
+        trendingDiv.classList.add('trending-topics');
+        trendingDiv.classList.add('css-175oi2r');
+
+        if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
+            suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+        } else {
+            console.error('Suggested Users div has no parent node');
+            isAddingTrendingTopics = false;
+            return;
+        }
+
+        function callGetTrends() {
+            try {
+                window.getTrends();
+            } catch (error) {
+                console.warn('Error calling getTrends', error);
+                setTimeout(callGetTrends, 1000);
+            } finally {
+                isAddingTrendingTopics = false;
+            }
+        }
+
+        callGetTrends();
+    }, 500);
 }
 
 function isRootUrl() {
