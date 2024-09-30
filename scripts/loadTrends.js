@@ -79,6 +79,23 @@ function getTrends() {
         }));
     }
 
+    function organizeTrends(trends) {
+        const weights = {
+            hashtags: 1.3,
+            words: 1.2,
+            phrases: 1.1,
+            globalWords: 1.0
+        };
+
+        return trends.sort((a, b) => {
+            const weightA = weights[a.type] || 1;
+            const weightB = weights[b.type] || 1;
+            const scoreA = a.count * weightA;
+            const scoreB = b.count * weightB;
+            return scoreB - scoreA;
+        });
+    }
+
     try {
         let trends = [];
         let savedTrends = [];
@@ -88,21 +105,32 @@ function getTrends() {
 
         window.receiveData = function(name, content) {
             if (!content || Object.keys(content).length === 0) {
+                if(name === 'nightsky-plugin-default-trends') {
+                    if (!apiFetched) {
+                        fetchTrendsApi('nightsky-plugin-default');
+                        apiFetched = true;
+                    }
+                }
                 return;
             }
             try {
                 const parsedContent = typeof content === 'string' ? JSON.parse(content) : content;
                 if(name === 'nightsky-plugin-default-trends') {
+                    timeSavedTrends = parsedContent.time;
+                    if (Date.now() - timeSavedTrends > 600000 && !apiFetched) {
+                        fetchTrendsApi('nightsky-plugin-default');
+                        apiFetched = true;
+                        return;
+                    }
                     if(parsedContent.trends && parsedContent.trends[lang]) {
                         const langTrends = parsedContent.trends[lang];
                         savedTrends = [
-                            ...(langTrends.words || []),
-                            ...(langTrends.phrases || []),
-                            ...(langTrends.hashtags || []),
-                            ...(langTrends.globalWords || [])
+                            ...(langTrends.words || []).map(trend => ({ ...trend, type: 'words' })),
+                            ...(langTrends.phrases || []).map(trend => ({ ...trend, type: 'phrases' })),
+                            ...(langTrends.hashtags || []).map(trend => ({ ...trend, type: 'hashtags' })),
+                            ...(langTrends.globalWords || []).map(trend => ({ ...trend, type: 'globalWords' }))
                         ];
-                        trends = savedTrends;
-                        timeSavedTrends = parsedContent.time;
+                        trends = organizeTrends(savedTrends);
                         totalTrends = trends.length;
                         displayTrends();
                     }
@@ -111,11 +139,12 @@ function getTrends() {
                     if(parsedContent.trends && parsedContent.trends[lang]) {
                         const langTrends = parsedContent.trends[lang];
                         trends = [
-                            ...(langTrends.words || []),
-                            ...(langTrends.phrases || []),
-                            ...(langTrends.hashtags || []),
-                            ...(langTrends.globalWords || [])
+                            ...(langTrends.words || []).map(trend => ({ ...trend, type: 'words' })),
+                            ...(langTrends.phrases || []).map(trend => ({ ...trend, type: 'phrases' })),
+                            ...(langTrends.hashtags || []).map(trend => ({ ...trend, type: 'hashtags' })),
+                            ...(langTrends.globalWords || []).map(trend => ({ ...trend, type: 'globalWords' }))
                         ];
+                        trends = organizeTrends(trends);
                         saveTrends('nightsky-plugin-default', trends);
                         totalTrends = trends.length;
                         displayTrends();
@@ -128,19 +157,8 @@ function getTrends() {
 
         requestSavedTrends('nightsky-plugin-default', 'trending-topics');
 
-        if(savedTrends.length === 0 || Date.now() - timeSavedTrends > 1000 * 60 * 10) {
-            if (!apiFetched) {
-                fetchTrendsApi('nightsky-plugin-default');
-                apiFetched = true;
-            }
-        }
-
-        if (trends.length === 0 && savedTrends.length === 0) {
-            trendingTopicsDiv.innerHTML = `<h2>${translations.trendingTopics[lang]}</h2>`;
-            return;
-        }
-
         function createTrendElement(trend, index) {
+            trendingTopicsDiv.innerHTML = `<h2>${translations.trendingTopics[lang]}</h2>`;
             const trendElement = document.createElement('li');
             const trendRank = document.createElement('span');
             const trendName = document.createElement('span');
@@ -213,52 +231,3 @@ function getTrends() {
 (function() {
     window.getTrends = getTrends;
 })();
-
-// function isRootUrl() {
-//     return window.location.pathname === '/search';
-// }
-
-// function onUrlChange(callback) {
-//     let oldHref = document.location.href;
-
-//     const body = document.querySelector("body");
-//     const observer = new MutationObserver(() => {
-//         if (oldHref !== document.location.href) {
-//             oldHref = document.location.href;
-//             callback();
-//         }
-//     });
-
-//     observer.observe(body, { childList: true, subtree: true });
-
-//     window.addEventListener('popstate', () => {
-//         callback();
-//     });
-
-//     return observer;
-// }
-
-// function initTrendingTopics() {
-//     if (isRootUrl()) {
-//         if (!initTrendingTopics.called) {
-//             getTrends();
-//             initTrendingTopics.called = true;
-//         }
-//     } else {
-//         initTrendingTopics.called = false;
-//     }
-// }
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     initTrendingTopics();
-// });
-
-// const observer = onUrlChange(() => {
-//     initTrendingTopics();
-// });
-
-// window.addEventListener('beforeunload', () => {
-//     observer.disconnect();
-// });
-
-// initTrendingTopics.called = false;
