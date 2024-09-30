@@ -1,11 +1,10 @@
-let isAddingTrendingTopics = false;
+isAddingTrendingTopics = false;
+trendingTopicsObserver = null;
 
 function addTrendingTopics() {
-    if (isAddingTrendingTopics) {
-        return;
-    }
+    if (isAddingTrendingTopics) return;
+    
     isAddingTrendingTopics = true;
-
     const trendingTopicsAlreadyAdded = document.querySelector('.trending-topics');
     if (trendingTopicsAlreadyAdded) {
         isAddingTrendingTopics = false;
@@ -22,29 +21,23 @@ function addTrendingTopics() {
         isAddingTrendingTopics = false;
         return;
     }
-    console.log('Executing addTrendingTopics');
-    // Keep all divs up to the div that contains the button and remove the subsequent ones
-    let keep = true;
+
     let feedDivsRemoved = false;
 
     function removeFeedDivs() {
         const children = Array.from(suggestedUsersDiv.children);
+        let keep = true;
         let removedAny = false;
 
         children.forEach((child) => {
-            if (!keep) { // Remove all subsequent divs
+            if (!keep) {
                 suggestedUsersDiv.removeChild(child);
                 removedAny = true;
                 return;
             }
 
-            // Check if there is a single div with a single button inside
             const button = child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON';
-
-            if (button) {
-                keep = false;
-                feedDivsRemoved = true;
-            }
+            if (button) keep = false;
         });
 
         if (removedAny) {
@@ -59,15 +52,13 @@ function addTrendingTopics() {
 
         if (!feedDivsRemoved) {
             console.error('Feed divs not removed');
-            setTimeout(tryRemoveFeedDivs, 500); // Retry after 500ms
+            setTimeout(tryRemoveFeedDivs, 500); 
             return;
         }
-        
-        // Create the new div for Trending Topics
+
         if (!document.querySelector('.trending-topics')) {
             const trendingDiv = document.createElement('div');
-            trendingDiv.classList.add('trending-topics');
-            trendingDiv.classList.add('css-175oi2r');
+            trendingDiv.classList.add('trending-topics', 'css-175oi2r');
 
             if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
                 suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
@@ -90,31 +81,34 @@ function addTrendingTopics() {
 
             callGetTrends();
         }
+
+        if (trendingTopicsObserver) {
+            trendingTopicsObserver.disconnect(); // Stop observing after successful insertion
+        }
+        isAddingTrendingTopics = false; // Reset flag after execution
     }
 
     // Observe changes in the suggestedUsersDiv to ensure divs are removed
-    const observer = new MutationObserver(() => {
-        if (!feedDivsRemoved) {
-            tryRemoveFeedDivs();
-        }
-    });
+    if (!trendingTopicsObserver) {
+        trendingTopicsObserver = new MutationObserver(() => {
+            if (!feedDivsRemoved) tryRemoveFeedDivs();
+        });
 
-    observer.observe(suggestedUsersDiv, { childList: true, subtree: true });
+        trendingTopicsObserver.observe(suggestedUsersDiv, { childList: true, subtree: true });
+    }
 
-    // Add a small delay to ensure all elements are present in the DOM
-    setTimeout(tryRemoveFeedDivs, 300);
+    setTimeout(tryRemoveFeedDivs, 300); // Add a small delay to ensure elements are in the DOM
 }
 
 function isRootUrl() {
     return window.location.pathname === '/search';
 }
 
-// Observe URL changes and reapply if necessary
 function onUrlChange(callback) {
     let oldHref = document.location.href;
-
     const body = document.querySelector("body");
-    const observer = new MutationObserver((mutations) => {
+
+    const observer = new MutationObserver(() => {
         if (oldHref !== document.location.href) {
             oldHref = document.location.href;
             callback();
@@ -122,13 +116,11 @@ function onUrlChange(callback) {
     });
 
     observer.observe(body, { childList: true, subtree: true });
-
     window.addEventListener('popstate', () => {
         callback();
     });
 }
 
-// Grants that the script will apply changes correctly after the page is fully loaded or when the DOM changes
 function initTrendingTopics() {
     if (isRootUrl()) {
         if (document.readyState === 'complete') {
@@ -140,8 +132,5 @@ function initTrendingTopics() {
     }
 }
 
-// Initialize on page load
 initTrendingTopics();
-
-// Reinitialize on URL change
 onUrlChange(initTrendingTopics);
