@@ -74,19 +74,15 @@ function onUrlChange() {
             const readyState = document.readyState;
             if (readyState === 'complete') {
                 if (!document.querySelector('.trending-topics') && !called) {
-                    setTimeout(() => {
-                        console.log('Adding trending topics on complete');
-                        window.addTrendingTopics();
-                    }, 1000);
+                    console.log('Adding trending topics on complete');
+                    window.addTrendingTopics();
                     called = true;
                 }
             } else {
                 window.addEventListener('load', () => {
                     if (!document.querySelector('.trending-topics') && !called) {
-                        setTimeout(() => {
-                            console.log('Adding trending topics on load');
-                            window.addTrendingTopics();
-                        }, 1000);
+                        console.log('Adding trending topics on load');
+                        window.addTrendingTopics();
                         called = true;
                     }
                 });
