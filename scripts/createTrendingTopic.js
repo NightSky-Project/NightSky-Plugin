@@ -1,5 +1,5 @@
-isAddingTrendingTopics = false;
-trendingTopicsObserver = null;
+var isAddingTrendingTopics = false;
+var trendingTopicsObserver = null;
 
 function addTrendingTopics() {
     if (isAddingTrendingTopics) return;
@@ -100,37 +100,39 @@ function addTrendingTopics() {
     setTimeout(tryRemoveFeedDivs, 300); // Add a small delay to ensure elements are in the DOM
 }
 
-function isRootUrl() {
+function isSearchUrl() {
     return window.location.pathname === '/search';
 }
 
-function onUrlChange(callback) {
-    let oldHref = document.location.href;
+function onUrlChange() {
     const body = document.querySelector("body");
 
     const observer = new MutationObserver(() => {
-        if (oldHref !== document.location.href) {
-            oldHref = document.location.href;
-            callback();
+        if(isSearchUrl()) {
+            const readyState = document.readyState;
+            if(readyState === 'complete') {
+                addTrendingTopics();
+            } else {
+                window.addEventListener('load', addTrendingTopics);
+            }
         }
     });
 
     observer.observe(body, { childList: true, subtree: true });
-    window.addEventListener('popstate', () => {
-        callback();
-    });
+    // window.addEventListener('popstate', () => {
+    //     callback();
+    // });
 }
 
 // function initTrendingTopics() {
-//     if (isRootUrl()) {
+//     if (isSearchUrl()) {
 //         if (document.readyState === 'complete') {
 //             addTrendingTopics();
 //         } else {
-//             document.addEventListener('DOMContentLoaded', addTrendingTopics);
+//             // document.addEventListener('DOMContentLoaded', addTrendingTopics);
 //             window.addEventListener('load', addTrendingTopics);
 //         }
 //     }
 // }
 
-// initTrendingTopics();
-onUrlChange(initTrendingTopics);
+onUrlChange();
