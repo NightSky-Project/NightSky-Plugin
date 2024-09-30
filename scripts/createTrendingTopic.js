@@ -17,22 +17,31 @@ function addTrendingTopics() {
     // Keep all divs up to the div that contains the button and remove the subsequent ones
     let keep = true;
     let feedDivsRemoved = false;
+
     function removeFeedDivs() {
-        Array.from(suggestedUsersDiv.children).forEach((child) => {
+        const children = Array.from(suggestedUsersDiv.children);
+        let removedAny = false;
+
+        children.forEach((child) => {
             if (!keep) { // Remove all subsequent divs
                 suggestedUsersDiv.removeChild(child);
+                removedAny = true;
                 return;
             }
-    
+
             // Check if there is a single div with a single button inside
             const button = child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON';
-    
+
             if (button) {
                 keep = false;
             }
         });
 
-        feedDivsRemoved = true;
+        if (removedAny) {
+            feedDivsRemoved = true;
+        } else {
+            feedDivsRemoved = children.every(child => !keep || child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON');
+        }
     }
 
     removeFeedDivs();
@@ -45,7 +54,7 @@ function addTrendingTopics() {
 
     function callGetTrends() {
         try {
-            if(!feedDivsRemoved) {
+            if (!feedDivsRemoved) {
                 removeFeedDivs();
                 throw new Error('Feed divs not removed yet');
             }

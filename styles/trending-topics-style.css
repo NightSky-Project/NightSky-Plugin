@@ -30,6 +30,7 @@
 .trend-rank {
     margin-right: 10px;
     font-size: 14px;
+    color: #999;
 }
 
 .trend-name {
@@ -40,4 +41,14 @@
 
 .trend-posts {
     font-size: 14px;
+    color: #999;
+}
+
+.trending-topics button {
+    margin-top: 10px;
+    background-color: transparent;
+    color: rgb(174, 187, 201);
+    border: none;
+    letter-spacing: 0.25px;
+    line-height: 18px;
 }
