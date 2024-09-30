@@ -46,21 +46,22 @@ function addTrendingTopics() {
 
     removeFeedDivs();
 
-    // Create the new div for Trending Topics
-    const trendingDiv = document.createElement('div');
-    trendingDiv.classList.add('trending-topics');
-    trendingDiv.classList.add('css-175oi2r');
-    if (suggestedUsersDiv.parentNode) {
-        suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-    } else {
-        console.error('Suggested Users div has no parent node');
-    }
-
     function callGetTrends() {
         try {
             if (!feedDivsRemoved) {
                 removeFeedDivs();
                 throw new Error('Feed divs not removed yet');
+            }
+            // Create the new div for Trending Topics
+            const trendingDiv = document.createElement('div');
+            trendingDiv.classList.add('trending-topics');
+            trendingDiv.classList.add('css-175oi2r');
+
+            if (suggestedUsersDiv.parentNode) {
+                suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+            } else {
+                console.error('Suggested Users div has no parent node');
+                return;
             }
             window.getTrends();
         } catch (error) {
