@@ -75,6 +75,7 @@ function onUrlChange() {
             if (readyState === 'complete') {
                 if (!document.querySelector('.trending-topics') && !called) {
                     setTimeout(() => {
+                        console.log('Adding trending topics on complete');
                         window.addTrendingTopics();
                     }, 1000);
                     called = true;
@@ -83,6 +84,7 @@ function onUrlChange() {
                 window.addEventListener('load', () => {
                     if (!document.querySelector('.trending-topics') && !called) {
                         setTimeout(() => {
+                            console.log('Adding trending topics on load');
                             window.addTrendingTopics();
                         }, 1000);
                         called = true;
