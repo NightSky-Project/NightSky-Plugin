@@ -80,11 +80,11 @@ function addTrendingTopics() {
     tryRemoveFeedDivs();
 }
 
-function addTrendingTopicsFunction() {
+(function() {
     if(!window.addTrendingTopics){
         window.addTrendingTopics = addTrendingTopics;
     }
-}
+})();
 
 function isSearchUrl() {
     return window.location.pathname === '/search';
@@ -97,17 +97,14 @@ function onUrlChange() {
         if(isSearchUrl()) {
             const readyState = document.readyState;
             if(readyState === 'complete') {
-                window.addTrendingTopics();
-                window.removeEventListener('load', addTrendingTopicsFunction);
-
-            } else {
-                window.addEventListener('load', addTrendingTopicsFunction);
+                if(!document.querySelector('.trending-topics')) {
+                    window.addTrendingTopics();
+                }
             }
         } else{
             const trendingTopics = document.querySelector('.trending-topics');
             if(trendingTopics) {
                 trendingTopics.remove();
-                window.removeEventListener('load', addTrendingTopicsFunction);
             }
         }
     });
