@@ -1,13 +1,6 @@
-var isAddingTrendingTopics = false;
-var trendingTopicsObserver = null;
-
 function addTrendingTopics() {
-    if (isAddingTrendingTopics) return;
-    
-    isAddingTrendingTopics = true;
     const trendingTopicsAlreadyAdded = document.querySelector('.trending-topics');
     if (trendingTopicsAlreadyAdded) {
-        isAddingTrendingTopics = false;
         return;
     }
 
@@ -18,21 +11,20 @@ function addTrendingTopics() {
 
     if (!suggestedUsersDiv) {
         console.error('Suggested Users div not found');
-        isAddingTrendingTopics = false;
         return;
     }
-
-    let feedDivsRemoved = false;
+    console.log("Adding trending topics");
 
     function removeFeedDivs() {
+        const feedRemoved = suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].children[0].tagName === 'BUTTON';
+        if(feedRemoved) return;
         const children = Array.from(suggestedUsersDiv.children);
         let keep = true;
-        let removedAny = false;
 
         children.forEach((child) => {
             if (!keep) {
                 if (suggestedUsersDiv.contains(child)) {
-                    suggestedUsersDiv.removeChild(child);///////////
+                    suggestedUsersDiv.removeChild(child);
                 }
                 removedAny = true;
                 return;
@@ -41,18 +33,14 @@ function addTrendingTopics() {
             const button = child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON';
             if (button) keep = false;
         });
-
-        if (removedAny) {
-            feedDivsRemoved = true;
-        } else {
-            feedDivsRemoved = children.every(child => !keep || child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON');
-        }
     }
 
     function tryRemoveFeedDivs() {
         removeFeedDivs();
+        // verifica se a ultima div de suggestedUsersDiv é um botão
+        const feedRemoved = suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].children[0].tagName === 'BUTTON';
 
-        if (!feedDivsRemoved) {
+        if (!feedRemoved) {
             console.error('Feed divs not removed');
             setTimeout(tryRemoveFeedDivs, 500); 
             return;
@@ -82,8 +70,6 @@ function addTrendingTopics() {
                     window.getTrends();
                 } catch (error) {
                     console.warn('Error calling getTrends', error);
-                } finally {
-                    isAddingTrendingTopics = false;
                 }
             }
 
@@ -92,6 +78,12 @@ function addTrendingTopics() {
     }
 
     tryRemoveFeedDivs();
+}
+
+function addTrendingTopicsFunction() {
+    if(!window.addTrendingTopics){
+        window.addTrendingTopics = addTrendingTopics;
+    }
 }
 
 function isSearchUrl() {
@@ -105,14 +97,17 @@ function onUrlChange() {
         if(isSearchUrl()) {
             const readyState = document.readyState;
             if(readyState === 'complete') {
-                addTrendingTopics();
+                window.addTrendingTopics();
+                window.removeEventListener('load', addTrendingTopicsFunction);
+
             } else {
-                window.addEventListener('load', addTrendingTopics);
+                window.addEventListener('load', addTrendingTopicsFunction);
             }
         } else{
             const trendingTopics = document.querySelector('.trending-topics');
             if(trendingTopics) {
                 trendingTopics.remove();
+                window.removeEventListener('load', addTrendingTopicsFunction);
             }
         }
     });
