@@ -20,7 +20,6 @@ function addTrendingTopics() {
 
     function removeFeedDivs() {
         const children = Array.from(suggestedUsersDiv.children);
-        let removedAny = false;
 
         children.forEach((child) => {
             if (!keep) { // Remove all subsequent divs
@@ -34,14 +33,9 @@ function addTrendingTopics() {
 
             if (button) {
                 keep = false;
+                feedDivsRemoved = true;
             }
         });
-
-        if (removedAny) {
-            feedDivsRemoved = true;
-        } else {
-            feedDivsRemoved = children.every(child => !keep || child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON');
-        }
     }
 
     removeFeedDivs();
@@ -57,7 +51,7 @@ function addTrendingTopics() {
             trendingDiv.classList.add('trending-topics');
             trendingDiv.classList.add('css-175oi2r');
 
-            if (suggestedUsersDiv.parentNode) {
+            if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
                 suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
             } else {
                 console.error('Suggested Users div has no parent node');
