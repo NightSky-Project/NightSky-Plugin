@@ -32,7 +32,7 @@ function addTrendingTopics() {
         children.forEach((child) => {
             if (!keep) {
                 if (suggestedUsersDiv.contains(child)) {
-                    suggestedUsersDiv.removeChild(child);
+                    suggestedUsersDiv.removeChild(child);///////////
                 }
                 removedAny = true;
                 return;
@@ -62,20 +62,26 @@ function addTrendingTopics() {
             const trendingDiv = document.createElement('div');
             trendingDiv.classList.add('trending-topics', 'css-175oi2r');
 
-            if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
-                suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-            } else {
-                console.error('Suggested Users div has no parent node');
-                isAddingTrendingTopics = false;
-                return;
+            try{
+                if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
+                    suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+                } else {
+                    console.error('Suggested Users div has no parent node');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error adding trending topics', error);
             }
 
             function callGetTrends() {
                 try {
+                    if(!window.getTrends) {
+                        setTimeout(callGetTrends, 500);
+                        return;
+                    }
                     window.getTrends();
                 } catch (error) {
                     console.warn('Error calling getTrends', error);
-                    setTimeout(callGetTrends, 500);
                 } finally {
                     isAddingTrendingTopics = false;
                 }
@@ -83,23 +89,9 @@ function addTrendingTopics() {
 
             callGetTrends();
         }
-
-        if (trendingTopicsObserver) {
-            trendingTopicsObserver.disconnect(); // Stop observing after successful insertion
-        }
-        isAddingTrendingTopics = false; // Reset flag after execution
     }
 
-    // Observe changes in the suggestedUsersDiv to ensure divs are removed
-    if (!trendingTopicsObserver) {
-        trendingTopicsObserver = new MutationObserver(() => {
-            if (!feedDivsRemoved) tryRemoveFeedDivs();
-        });
-
-        trendingTopicsObserver.observe(suggestedUsersDiv, { childList: true, subtree: true });
-    }
-
-    setTimeout(tryRemoveFeedDivs, 300); // Add a small delay to ensure elements are in the DOM
+    tryRemoveFeedDivs();
 }
 
 function isSearchUrl() {
@@ -116,6 +108,11 @@ function onUrlChange() {
                 addTrendingTopics();
             } else {
                 window.addEventListener('load', addTrendingTopics);
+            }
+        } else{
+            const trendingTopics = document.querySelector('.trending-topics');
+            if(trendingTopics) {
+                trendingTopics.remove();
             }
         }
     });
