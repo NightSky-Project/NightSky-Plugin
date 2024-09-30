@@ -5,79 +5,53 @@ function addTrendingTopics() {
     }
 
     let suggestedUsersDiv = document.querySelector('div.r-1d5kdc7:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)');
-    if (!suggestedUsersDiv) {
-        suggestedUsersDiv = document.querySelector('.r-sa2ff0');
+    if(!suggestedUsersDiv) {
+        suggestedUsersDiv = document.querySelector('.r-sa2ff0');  
     }
 
     if (!suggestedUsersDiv) {
-        console.error('Suggested Users div not found');
+        if(!suggestedUsersDiv) {
+            console.error('Suggested Users div not found');
+        }
         return;
     }
-    console.log("Adding trending topics");
 
-    function removeFeedDivs() {
-        const feedRemoved = suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].children[0].tagName === 'BUTTON';
-        if(feedRemoved) return;
-        const children = Array.from(suggestedUsersDiv.children);
-        let keep = true;
-
-        children.forEach((child) => {
-            if (!keep) {
-                if (suggestedUsersDiv.contains(child)) {
-                    suggestedUsersDiv.removeChild(child);
-                }
-                removedAny = true;
-                return;
-            }
-
-            const button = child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON';
-            if (button) keep = false;
-        });
-    }
-
-    function tryRemoveFeedDivs() {
-        removeFeedDivs();
-        // verifica se a ultima div de suggestedUsersDiv é um botão
-        const feedRemoved = suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].childElementCount === 1 && suggestedUsersDiv.children[suggestedUsersDiv.children.length - 1].children[0].children[0].tagName === 'BUTTON';
-
-        if (!feedRemoved) {
-            console.error('Feed divs not removed');
-            setTimeout(tryRemoveFeedDivs, 500); 
+    console.log('Adding trending topics');
+    // Keep all divs up to the div that contains the button and remove the subsequent ones
+    let keep = true;
+    Array.from(suggestedUsersDiv.children).forEach((child) => {
+        if (!keep) { // Remove all subsequent divs
+            suggestedUsersDiv.removeChild(child);
             return;
         }
 
-        if (!document.querySelector('.trending-topics')) {
-            const trendingDiv = document.createElement('div');
-            trendingDiv.classList.add('trending-topics', 'css-175oi2r');
+        // Check if there is a single div with a single button inside
+        const button = child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON';
 
-            try{
-                if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
-                    suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-                } else {
-                    console.error('Suggested Users div has no parent node');
-                    return;
-                }
-            } catch (error) {
-                console.error('Error adding trending topics', error);
+        if (button) {
+            keep = false;
+        }
+    });
+
+    if(!document.querySelector('.trending-topics')) {
+        const trendingDiv = document.createElement('div');
+        trendingDiv.classList.add('trending-topics', 'css-175oi2r');
+        suggestedUsersDiv.insertBefore(trendingDiv, suggestedUsersDiv.firstChild);
+    }
+
+    function callGetTrends() {
+        try {
+            if(!window.getTrends) {
+                setTimeout(callGetTrends, 500);
+                return;
             }
-
-            function callGetTrends() {
-                try {
-                    if(!window.getTrends) {
-                        setTimeout(callGetTrends, 500);
-                        return;
-                    }
-                    window.getTrends();
-                } catch (error) {
-                    console.warn('Error calling getTrends', error);
-                }
-            }
-
-            callGetTrends();
+            window.getTrends();
+        } catch (error) {
+            console.warn('Error calling getTrends', error);
         }
     }
 
-    tryRemoveFeedDivs();
+    callGetTrends();
 }
 
 (function() {
@@ -90,40 +64,44 @@ function isSearchUrl() {
     return window.location.pathname === '/search';
 }
 
+let called = false;
 function onUrlChange() {
     const body = document.querySelector("body");
 
     const observer = new MutationObserver(() => {
-        if(isSearchUrl()) {
+        if (isSearchUrl()) {
             const readyState = document.readyState;
-            if(readyState === 'complete') {
-                if(!document.querySelector('.trending-topics')) {
-                    window.addTrendingTopics();
+            if (readyState === 'complete') {
+                if (!document.querySelector('.trending-topics') && !called) {
+                    setTimeout(() => {
+                        window.addTrendingTopics();
+                    }, 1000);
+                    called = true;
                 }
+            } else {
+                window.addEventListener('load', () => {
+                    if (!document.querySelector('.trending-topics') && !called) {
+                        setTimeout(() => {
+                            window.addTrendingTopics();
+                        }, 1000);
+                        called = true;
+                    }
+                });
             }
-        } else{
+        } else {
             const trendingTopics = document.querySelector('.trending-topics');
-            if(trendingTopics) {
+            if (trendingTopics) {
                 trendingTopics.remove();
+                called = false;
             }
         }
     });
 
     observer.observe(body, { childList: true, subtree: true });
-    // window.addEventListener('popstate', () => {
-    //     callback();
-    // });
+    window.addEventListener('popstate', () => {
+        called = false;
+        onUrlChange();
+    });
 }
-
-// function initTrendingTopics() {
-//     if (isSearchUrl()) {
-//         if (document.readyState === 'complete') {
-//             addTrendingTopics();
-//         } else {
-//             // document.addEventListener('DOMContentLoaded', addTrendingTopics);
-//             window.addEventListener('load', addTrendingTopics);
-//         }
-//     }
-// }
 
 onUrlChange();
