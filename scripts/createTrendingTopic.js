@@ -78,14 +78,6 @@ function onUrlChange() {
                     window.addTrendingTopics();
                     called = true;
                 }
-            } else {
-                window.addEventListener('load', () => {
-                    if (!document.querySelector('.trending-topics') && !called) {
-                        console.log('Adding trending topics on load');
-                        window.addTrendingTopics();
-                        called = true;
-                    }
-                });
             }
         } else {
             const trendingTopics = document.querySelector('.trending-topics');
