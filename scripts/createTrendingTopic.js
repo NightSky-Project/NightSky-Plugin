@@ -27,9 +27,9 @@ function addTrendingTopics() {
         const button = child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON';
 
         if (button) {
+            feedDivsRemoved = true;
             keep = false;
         }
-        feedDivsRemoved = true;
     });
 
     // Create the new div for Trending Topics

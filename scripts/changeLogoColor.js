@@ -60,9 +60,7 @@
 
         // Observe DOM changes and reapply if necessary
         const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                changeSvgIcon();
-            });
+            changeSvgIcon();
         });
 
         observer.observe(document.body, {

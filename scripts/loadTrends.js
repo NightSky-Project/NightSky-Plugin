@@ -98,7 +98,6 @@ function getTrends() {
 
     try {
         let trends = [];
-        let savedTrends = [];
         let timeSavedTrends = 0;
         let displayedTrends = 6;
         let totalTrends = 0;
@@ -106,6 +105,7 @@ function getTrends() {
         window.receiveData = function(name, content) {
             if (!content || Object.keys(content).length === 0) {
                 if(name === 'nightsky-plugin-default-trends') {
+                    console.warn('No content found for trends in storage');
                     if (!apiFetched) {
                         fetchTrendsApi('nightsky-plugin-default');
                         apiFetched = true;
@@ -118,19 +118,21 @@ function getTrends() {
                 if(name === 'nightsky-plugin-default-trends') {
                     timeSavedTrends = parsedContent.time;
                     if (Date.now() - timeSavedTrends > 600000 && !apiFetched) {
+                        console.log('Fetching trends from API');
                         fetchTrendsApi('nightsky-plugin-default');
                         apiFetched = true;
                         return;
                     }
                     if(parsedContent.trends && parsedContent.trends[lang]) {
                         const langTrends = parsedContent.trends[lang];
-                        savedTrends = [
+                        const savedTrends = [
                             ...(langTrends.words || []).map(trend => ({ ...trend, type: 'words' })),
                             ...(langTrends.phrases || []).map(trend => ({ ...trend, type: 'phrases' })),
                             ...(langTrends.hashtags || []).map(trend => ({ ...trend, type: 'hashtags' })),
                             ...(langTrends.globalWords || []).map(trend => ({ ...trend, type: 'globalWords' }))
                         ];
                         trends = organizeTrends(savedTrends);
+                        console.log('Trends fetched from storage:', trends);
                         totalTrends = trends.length;
                         displayTrends();
                     }
@@ -138,13 +140,13 @@ function getTrends() {
                 if(name === 'nightsky-plugin-default-fetch-trends') {
                     if(parsedContent.trends && parsedContent.trends[lang]) {
                         const langTrends = parsedContent.trends[lang];
-                        trends = [
+                        const trendsFetched = [
                             ...(langTrends.words || []).map(trend => ({ ...trend, type: 'words' })),
                             ...(langTrends.phrases || []).map(trend => ({ ...trend, type: 'phrases' })),
                             ...(langTrends.hashtags || []).map(trend => ({ ...trend, type: 'hashtags' })),
                             ...(langTrends.globalWords || []).map(trend => ({ ...trend, type: 'globalWords' }))
                         ];
-                        trends = organizeTrends(trends);
+                        trends = organizeTrends(trendsFetched);
                         saveTrends('nightsky-plugin-default', trends);
                         totalTrends = trends.length;
                         displayTrends();
@@ -171,12 +173,12 @@ function getTrends() {
             const categoryTranslation = translations.categories[trend.category][lang];
             trendRank.textContent = `${index + 1} ${categoryTranslation !== '' ? ` - ${categoryTranslation}` : ''}`;
             trendName.textContent = trend.topic;
-            const unit = trend.posts >= 1000000 ? translations.million[lang] : trend.posts >= 1000 ? translations.k[lang] : '';
-            const formattedCount = trend.posts >= 1000000 
-                ? (trend.posts / 1000000).toFixed(1).replace('.', ',') 
-                : trend.posts >= 1000 
-                ? (trend.posts / 1000).toFixed(1).replace('.', ',') 
-                : trend.posts;
+            const unit = trend.count >= 1000000 ? translations.million[lang] : trend.count >= 1000 ? translations.k[lang] : '';
+            const formattedCount = trend.count >= 1000000 
+                ? (trend.count / 1000000).toFixed(1).replace('.', ',') 
+                : trend.count >= 1000 
+                ? (trend.count / 1000).toFixed(1).replace('.', ',') 
+                : trend.count;
             trendPosts.textContent = `${formattedCount} ${unit} ${translations.posts[lang]}`;
     
             trendElement.appendChild(trendRank);
