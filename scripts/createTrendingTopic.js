@@ -22,7 +22,7 @@ function addTrendingTopics() {
     // Keep all divs up to the div that contains the button and remove the subsequent ones
     let keep = true;
     console.log(suggestedUsersDiv.children.length);
-    if(!removedFeeds && suggestedUsersDiv.children.length > 5) {
+    if(!removedFeeds && suggestedUsersDiv.children.length >= 21) {
         Array.from(suggestedUsersDiv.children).forEach((child) => {
             if (!keep) { // Remove all subsequent divs
                 suggestedUsersDiv.removeChild(child);
