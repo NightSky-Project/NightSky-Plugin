@@ -54,22 +54,24 @@ function addTrendingTopics() {
         }
     }
 
-    // Add a small delay to ensure all elements are present in the DOM
-    setTimeout(() => {
+    let trendingDiv = null
+     // Create the new div for Trending Topics
+    if(!document.querySelector('.trending-topics')) {
+        trendingDiv = document.createElement('div');
+        trendingDiv.classList.add('trending-topics');
+        trendingDiv.classList.add('css-175oi2r');
+    }
+
+    function tryRemoveFeedDivs() {
         removeFeedDivs();
 
         if (!feedDivsRemoved) {
             console.error('Feed divs not removed');
-            isAddingTrendingTopics = false;
+            setTimeout(tryRemoveFeedDivs, 500); // Retry after 500ms
             return;
         }
-
-        // Create the new div for Trending Topics
-        const trendingDiv = document.createElement('div');
-        trendingDiv.classList.add('trending-topics');
-        trendingDiv.classList.add('css-175oi2r');
-
-        if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
+        
+        if (suggestedUsersDiv && suggestedUsersDiv.parentNode && trendingDiv) {
             suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
         } else {
             console.error('Suggested Users div has no parent node');
@@ -82,14 +84,17 @@ function addTrendingTopics() {
                 window.getTrends();
             } catch (error) {
                 console.warn('Error calling getTrends', error);
-                setTimeout(callGetTrends, 1000);
+                setTimeout(callGetTrends, 500);
             } finally {
                 isAddingTrendingTopics = false;
             }
         }
 
         callGetTrends();
-    }, 500);
+    }
+
+    // Add a small delay to ensure all elements are present in the DOM
+    setTimeout(tryRemoveFeedDivs, 300);
 }
 
 function isRootUrl() {
