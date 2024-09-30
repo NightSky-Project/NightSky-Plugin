@@ -1,6 +1,14 @@
+let isAddingTrendingTopics = false;
+
 function addTrendingTopics() {
+    if (isAddingTrendingTopics) {
+        return;
+    }
+    isAddingTrendingTopics = true;
+
     const trendingTopicsAlreadyAdded = document.querySelector('.trending-topics');
     if (trendingTopicsAlreadyAdded) {
+        isAddingTrendingTopics = false;
         return;
     }
 
@@ -11,18 +19,7 @@ function addTrendingTopics() {
 
     if (!suggestedUsersDiv) {
         console.error('Suggested Users div not found');
-        return;
-    }
-
-    // Create the new div for Trending Topics
-    const trendingDiv = document.createElement('div');
-    trendingDiv.classList.add('trending-topics');
-    trendingDiv.classList.add('css-175oi2r');
-
-    if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
-        suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-    } else {
-        console.error('Suggested Users div has no parent node');
+        isAddingTrendingTopics = false;
         return;
     }
 
@@ -32,6 +29,7 @@ function addTrendingTopics() {
 
     function removeFeedDivs() {
         const children = Array.from(suggestedUsersDiv.children);
+        let removedAny = false;
 
         children.forEach((child) => {
             if (!keep) { // Remove all subsequent divs
@@ -48,20 +46,43 @@ function addTrendingTopics() {
                 feedDivsRemoved = true;
             }
         });
+
+        if (removedAny) {
+            feedDivsRemoved = true;
+        } else {
+            feedDivsRemoved = children.every(child => !keep || child.childElementCount === 1 && child.children[0].childElementCount === 1 && child.children[0].children[0].tagName === 'BUTTON');
+        }
     }
 
     removeFeedDivs();
 
+    if (!feedDivsRemoved) {
+        console.error('Feed divs not removed');
+        isAddingTrendingTopics = false;
+        return;
+    }
+
+    // Create the new div for Trending Topics
+    const trendingDiv = document.createElement('div');
+    trendingDiv.classList.add('trending-topics');
+    trendingDiv.classList.add('css-175oi2r');
+
+    if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
+        suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+    } else {
+        console.error('Suggested Users div has no parent node');
+        isAddingTrendingTopics = false;
+        return;
+    }
+
     function callGetTrends() {
         try {
-            if (!feedDivsRemoved) {
-                removeFeedDivs();
-                throw new Error('Feed divs not removed yet');
-            }
             window.getTrends();
         } catch (error) {
             console.warn('Error calling getTrends', error);
             setTimeout(callGetTrends, 1000);
+        } finally {
+            isAddingTrendingTopics = false;
         }
     }
 
