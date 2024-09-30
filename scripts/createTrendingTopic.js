@@ -1,3 +1,4 @@
+console.log('Trending topics script loaded');   
 function addTrendingTopics() {
     const trendingTopicsAlreadyAdded = document.querySelector('.trending-topics');
     if (trendingTopicsAlreadyAdded) {
