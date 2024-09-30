@@ -76,7 +76,7 @@ async function getTrends() {
         let savedTrends = [];
         let timeSavedTrends = 0;
         let displayedTrends = 6;
-        const totalTrends = trends.length;
+        let totalTrends = 0;
 
         window.receiveData = function(name, content) {
             if (!content || Object.keys(content).length === 0) {
@@ -98,6 +98,7 @@ async function getTrends() {
                         timeSavedTrends = parsedContent.time;
                         console.log('Trends after processing:', trends);
                         console.log('Saved trends after processing:', savedTrends);
+                        totalTrends = trends.length;
                         displayTrends();
                     }
                 }
@@ -113,6 +114,7 @@ async function getTrends() {
                         ];
                         saveTrends('nightsky-plugin-default', trends);
                         console.log('Trends after processing:', trends);
+                        totalTrends = trends.length;
                         displayTrends();
                     }
                 }
