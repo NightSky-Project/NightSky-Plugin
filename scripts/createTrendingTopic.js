@@ -31,7 +31,9 @@ function addTrendingTopics() {
 
         children.forEach((child) => {
             if (!keep) {
-                suggestedUsersDiv.removeChild(child);
+                if (suggestedUsersDiv.contains(child)) {
+                    suggestedUsersDiv.removeChild(child);
+                }
                 removedAny = true;
                 return;
             }
