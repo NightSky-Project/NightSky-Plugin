@@ -5,19 +5,18 @@ function addTrendingTopics() {
     }
 
     let suggestedUsersDiv = document.querySelector('div.r-1d5kdc7:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)');
-    if(!suggestedUsersDiv) {
-        suggestedUsersDiv = document.querySelector('.r-sa2ff0');  
+    if (!suggestedUsersDiv) {
+        suggestedUsersDiv = document.querySelector('.r-sa2ff0');
     }
 
     if (!suggestedUsersDiv) {
-        if(!suggestedUsersDiv) {
-            console.error('Suggested Users div not found');
-        }
+        console.error('Suggested Users div not found');
         return;
     }
 
     // Keep all divs up to the div that contains the button and remove the subsequent ones
     let keep = true;
+    let feedDivsRemoved = false;
     Array.from(suggestedUsersDiv.children).forEach((child) => {
         if (!keep) { // Remove all subsequent divs
             suggestedUsersDiv.removeChild(child);
@@ -30,6 +29,7 @@ function addTrendingTopics() {
         if (button) {
             keep = false;
         }
+        feedDivsRemoved = true;
     });
 
     // Create the new div for Trending Topics
@@ -37,9 +37,12 @@ function addTrendingTopics() {
     trendingDiv.classList.add('trending-topics');
     trendingDiv.classList.add('css-175oi2r');
     suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-    
+
     function callGetTrends() {
         try {
+            if(!feedDivsRemoved) {
+                throw new Error('Feed divs not removed yet');
+            }
             window.getTrends();
         } catch (error) {
             console.warn('Error calling getTrends', error);
@@ -48,34 +51,6 @@ function addTrendingTopics() {
     }
 
     callGetTrends();
-
-
-    /*Function to fetch external resources*/
-    // function requestResource(pluginSlug, resource) {
-    //     // Send a message to the WebView to fetch the resource
-    //     window.ReactNativeWebView.postMessage(JSON.stringify({
-    //         messageType: 'FETCH_RESOURCE',
-    //         pluginSlug: pluginSlug,
-    //         resource: resource,
-    //     }));
-    // }
-
-    // window.receiveResource = function(path, content) {
-    //     if (trendingDiv.innerHTML === content) {
-    //         return;
-    //     }
-
-    //     trendingDiv.innerHTML = content;
-    //     trendingDiv.classList.add('css-175oi2r');
-
-    //     if (suggestedUsersDiv.parentNode) {
-    //         if (!document.contains(trendingDiv)) {
-    //             suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-    //         }
-    //     }
-    // }
-
-    // requestResource('nightsky-plugin-default', 'trending-topics.html');
 }
 
 function isRootUrl() {

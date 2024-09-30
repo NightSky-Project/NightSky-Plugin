@@ -154,7 +154,12 @@ function getTrends() {
             trendRank.textContent = `${index + 1} ${categoryTranslation !== '' ? ` - ${categoryTranslation}` : ''}`;
             trendName.textContent = trend.topic;
             const unit = trend.posts >= 1000000 ? translations.million[lang] : trend.posts >= 1000 ? translations.k[lang] : '';
-            trendPosts.textContent = `${trend.count} ${unit} ${translations.posts[lang]}`;
+            const formattedCount = trend.posts >= 1000000 
+                ? (trend.posts / 1000000).toFixed(1).replace('.', ',') 
+                : trend.posts >= 1000 
+                ? (trend.posts / 1000).toFixed(1).replace('.', ',') 
+                : trend.posts;
+            trendPosts.textContent = `${formattedCount} ${unit} ${translations.posts[lang]}`;
     
             trendElement.appendChild(trendRank);
             trendElement.appendChild(trendName);
@@ -170,7 +175,6 @@ function getTrends() {
         
         function displayTrends() {
             try {
-                console.log('Displaying trends:', trends, displayedTrends, totalTrends);
                 if (!trends || trends.length === 0) {
                     return;
                 }
