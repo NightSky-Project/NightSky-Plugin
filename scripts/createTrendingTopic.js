@@ -54,14 +54,6 @@ function addTrendingTopics() {
         }
     }
 
-    let trendingDiv = null
-     // Create the new div for Trending Topics
-    if(!document.querySelector('.trending-topics')) {
-        trendingDiv = document.createElement('div');
-        trendingDiv.classList.add('trending-topics');
-        trendingDiv.classList.add('css-175oi2r');
-    }
-
     function tryRemoveFeedDivs() {
         removeFeedDivs();
 
@@ -71,7 +63,13 @@ function addTrendingTopics() {
             return;
         }
         
-        if (suggestedUsersDiv && suggestedUsersDiv.parentNode && trendingDiv) {
+        // Create the new div for Trending Topics
+        if(!document.querySelector('.trending-topics')) {
+            const trendingDiv = document.createElement('div');
+            trendingDiv.classList.add('trending-topics');
+            trendingDiv.classList.add('css-175oi2r');
+        }
+        if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
             suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
         } else {
             console.error('Suggested Users div has no parent node');
