@@ -121,16 +121,16 @@ function onUrlChange(callback) {
     });
 }
 
-function initTrendingTopics() {
-    if (isRootUrl()) {
-        if (document.readyState === 'complete') {
-            addTrendingTopics();
-        } else {
-            document.addEventListener('DOMContentLoaded', addTrendingTopics);
-            window.addEventListener('load', addTrendingTopics);
-        }
-    }
-}
+// function initTrendingTopics() {
+//     if (isRootUrl()) {
+//         if (document.readyState === 'complete') {
+//             addTrendingTopics();
+//         } else {
+//             document.addEventListener('DOMContentLoaded', addTrendingTopics);
+//             window.addEventListener('load', addTrendingTopics);
+//         }
+//     }
+// }
 
-initTrendingTopics();
+// initTrendingTopics();
 onUrlChange(initTrendingTopics);
