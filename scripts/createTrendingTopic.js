@@ -64,32 +64,42 @@ function addTrendingTopics() {
         }
         
         // Create the new div for Trending Topics
-        if(!document.querySelector('.trending-topics')) {
+        if (!document.querySelector('.trending-topics')) {
             const trendingDiv = document.createElement('div');
             trendingDiv.classList.add('trending-topics');
             trendingDiv.classList.add('css-175oi2r');
-        }
-        if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
-            suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
-        } else {
-            console.error('Suggested Users div has no parent node');
-            isAddingTrendingTopics = false;
-            return;
-        }
 
-        function callGetTrends() {
-            try {
-                window.getTrends();
-            } catch (error) {
-                console.warn('Error calling getTrends', error);
-                setTimeout(callGetTrends, 500);
-            } finally {
+            if (suggestedUsersDiv && suggestedUsersDiv.parentNode) {
+                suggestedUsersDiv.parentNode.insertBefore(trendingDiv, suggestedUsersDiv);
+            } else {
+                console.error('Suggested Users div has no parent node');
                 isAddingTrendingTopics = false;
+                return;
             }
-        }
 
-        callGetTrends();
+            function callGetTrends() {
+                try {
+                    window.getTrends();
+                } catch (error) {
+                    console.warn('Error calling getTrends', error);
+                    setTimeout(callGetTrends, 500);
+                } finally {
+                    isAddingTrendingTopics = false;
+                }
+            }
+
+            callGetTrends();
+        }
     }
+
+    // Observe changes in the suggestedUsersDiv to ensure divs are removed
+    const observer = new MutationObserver(() => {
+        if (!feedDivsRemoved) {
+            tryRemoveFeedDivs();
+        }
+    });
+
+    observer.observe(suggestedUsersDiv, { childList: true, subtree: true });
 
     // Add a small delay to ensure all elements are present in the DOM
     setTimeout(tryRemoveFeedDivs, 300);
