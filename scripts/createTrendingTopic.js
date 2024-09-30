@@ -76,10 +76,16 @@ function isSearchUrl() {
 }
 
 var called = false;
+var observer;
+
 function onUrlChange() {
     const body = document.querySelector("body");
 
-    const observer = new MutationObserver(() => {
+    if (observer) {
+        observer.disconnect();
+    }
+
+    observer = new MutationObserver(() => {
         if (isSearchUrl()) {
             if (!document.querySelector('.trending-topics') && !called) {
                 console.log('Adding trending topics on URL change');
@@ -99,7 +105,6 @@ function onUrlChange() {
 
     window.addEventListener('popstate', () => {
         called = false;
-        observer.disconnect();
         onUrlChange();
     });
 }
